@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CropSense AI — Gemini 2.5 Edition</title>
+<meta name="description" content="AI-powered crop disease detection, weather, and planning.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── CropSense AI Styles ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green-950: #0d2318; --green-900: #1a3d2b; --green-800: #234d35;
+  --green-700: #2d6a4f; --green-600: #40916c; --green-500: #52b788;
+  --green-400: #74c69d; --green-50:  #f0faf4;
+  --neutral-900: #111614; --neutral-500: #5c6b63; --neutral-100: #eef0ee;
+  --neutral-50:  #f7f8f7; --white: #ffffff;
+  --sidebar-w: 220px;
+  --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+  --radius-md: 10px; --radius-lg: 16px; --radius-xl: 24px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
+  --shadow-green: 0 4px 20px rgba(52,145,108,0.25);
+}
+
+body { font-family: var(--font-body); background: var(--neutral-50); color: var(--neutral-900); line-height: 1.6; min-height: 100vh; }
+.hidden { display: none !important; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--green-700); color: var(--white); border: none; border-radius: var(--radius-md);
+  font-family: var(--font-body); font-size: 15px; font-weight: 600; padding: 11px 22px; cursor: pointer;
+  transition: all 0.2s; box-shadow: var(--shadow-green); white-space: nowrap;
+}
+.btn-primary:hover { background: var(--green-800); transform: translateY(-1px); }
+.btn-primary.large { font-size: 16px; padding: 14px 28px; border-radius: var(--radius-lg); }
+.btn-primary.full-width { width: 100%; }
+
+.input-field {
+  width: 100%; font-family: var(--font-body); font-size: 14px; background: var(--white);
+  border: 1.5px solid var(--neutral-100); border-radius: var(--radius-md); padding: 12px; outline: none; margin-bottom: 10px;
+}
+
+.modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(10,13,11,0.8); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; }
+.modal-box { background: var(--white); border-radius: var(--radius-xl); padding: 2.5rem; max-width: 440px; width: 90%; box-shadow: var(--shadow-lg); text-align: center; }
+
+.app { display: flex; min-height: 100vh; }
+.sidebar { width: var(--sidebar-w); background: var(--green-950); color: var(--white); display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; }
+.sidebar-logo { padding: 1.5rem; font-family: var(--font-display); font-size: 18px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar-nav { flex: 1; padding: 1rem; display: flex; flex-direction: column; gap: 5px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-md); background: transparent; border: none; color: var(--neutral-500); cursor: pointer; text-align: left; font-size: 15px;}
+.nav-item.active { background: var(--green-700); color: white; font-weight: 600; }
+.main-content { flex: 1; margin-left: var(--sidebar-w); padding: 2.5rem; max-width: 900px; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.upload-zone { border: 2px dashed var(--green-400); border-radius: var(--radius-xl); background: var(--green-50); padding: 4rem 2rem; text-align: center; cursor: pointer; transition: 0.2s; }
+.upload-zone:hover { background: #d8f3dc; }
+.result-hero { background: linear-gradient(135deg, var(--green-800), var(--green-950)); border-radius: var(--radius-xl); padding: 2.5rem; color: white; margin-bottom: 2rem; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+.r-card { background: white; padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--neutral-100); box-shadow: var(--shadow-sm); }
+.full { grid-column: 1 / -1; }
+.leaf-spin { font-size: 3rem; display: inline-block; animation: spin 2s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.flex-row { display: flex; gap: 10px; }
+.library-answer { font-size: 15px; color: var(--neutral-900); }
+.library-answer h3 { color: var(--green-800); margin-bottom: 10px; }
+.library-answer p, .library-answer ul { margin-bottom: 10px; }
+.library-answer ul { padding-left: 20px; }
+</style>
+</head>
+<body>
+
+<!-- API KEY MODAL -->
+<div id="api-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div style="font-size:3.5rem; margin-bottom:1rem;">🤖</div>
+    <h2 style="font-family: var(--font-display);">Connect Gemini AI</h2>
+    <p style="color: var(--neutral-500); font-size: 14px; margin-bottom: 1.5rem;">Enter your Google AI Studio API key to enable analysis.</p>
+    <input type="password" id="api-key-input" class="input-field" placeholder="AIzaSy...">
+    <button class="btn-primary full-width" id="save-key-btn">Save Key & Start</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo">🌱 CropSense<strong>AI</strong></div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-target="tab-diagnose"><span>🔍</span> Diagnose</button>
+      <button class="nav-item" data-target="tab-weather"><span>☁️</span> Weather</button>
+      <button class="nav-item" data-target="tab-planner"><span>📅</span> Planner</button>
+      <button class="nav-item" data-target="tab-library"><span>📚</span> Library</button>
+    </nav>
+    <div style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+      <button class="btn-primary full-width" style="background: rgba(255,255,255,0.1); box-shadow: none;" onclick="resetKey()">Reset Key</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    
+    <!-- 1. DIAGNOSE TAB -->
+    <section id="tab-diagnose" class="tab-panel active">
+      <h2 style="font-family: var(--font-display); font-size: 26px; margin-bottom: 1.5rem;">Crop Diagnosis</h2>
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="file-input" accept="image/*" hidden>
+        <div style="font-size: 3.5rem;">📸</div>
+        <h3>Upload Crop Photo</h3>
+      </div>
+      <div id="preview-section" class="hidden" style="margin-top: 1rem;">
+        <img id="preview-img" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: var(--radius-lg); margin-bottom: 1rem;">
+        <button class="btn-primary large full-width" id="analyze-btn">Analyze Image</button>
+      </div>
+      <div id="diagnose-loader" class="hidden" style="text-align: center; padding: 3rem;">
+        <div class="leaf-spin">🌿</div><p>Scanning leaves...</p>
+      </div>
+      <div id="diagnose-result" class="hidden" style="margin-top: 1.5rem;"></div>
+    </section>
+
+    <!-- 2. WEATHER TAB -->
+    <section id="tab-weather" class="tab-panel">
+      <h2 style="font-family: var(--font-display); font-size: 26px; margin-bottom: 1.5rem;">Weather & Advisory</h2>
+      <div class="flex-row">
+        <input type="text" id="loc-input" class="input-field" placeholder="Enter City/Region (e.g., Pune, Maharashtra)">
+        <button class="btn-primary" id="weather-btn">Get Weather</button>
+      </div>
+      <div id="weather-loader" class="hidden" style="text-align: center; padding: 3rem;">
+        <div class="leaf-spin">⛅</div><p>Fetching weather models...</p>
+      </div>
+      <div id="weather-result" class="hidden" style="margin-top: 1.5rem;"></div>
+    </section>
+
+    <!-- 3. PLANNER TAB -->
+    <section id="tab-planner" class="tab-panel">
+      <h2 style="font-family: var(--font-display); font-size: 26px; margin-bottom: 1.5rem;">AI Crop Planner</h2>
+      <div class="r-card full" style="margin-bottom: 1rem;">
+        <div class="flex-row">
+          <input type="text" id="crop-input" class="input-field" placeholder="Crop Name (e.g., Wheat)">
+          <input type="text" id="region-input" class="input-field" placeholder="Region (e.g., Punjab)">
+        </div>
+        <button class="btn-primary full-width" id="planner-btn">Generate Seasonal Plan</button>
+      </div>
+      <div id="planner-loader" class="hidden" style="text-align: center; padding: 3rem;">
+        <div class="leaf-spin">📅</div><p>Drafting schedule...</p>
+      </div>
+      <div id="planner-result" class="hidden" style="margin-top: 1.5rem;"></div>
+    </section>
+
+    <!-- 4. LIBRARY TAB -->
+    <section id="tab-library" class="tab-panel">
+      <h2 style="font-family: var(--font-display); font-size: 26px; margin-bottom: 1.5rem;">Knowledge Library</h2>
+      <div class="flex-row">
+        <input type="text" id="query-input" class="input-field" placeholder="Ask anything... (e.g., How to fix nitrogen deficiency in tomatoes?)">
+        <button class="btn-primary" id="library-btn">Ask AI</button>
+      </div>
+      <div id="library-loader" class="hidden" style="text-align: center; padding: 3rem;">
+        <div class="leaf-spin">📚</div><p>Searching knowledge base...</p>
+      </div>
+      <div id="library-result" class="hidden r-card full" style="margin-top: 1.5rem;"></div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+// --- STATE & SETUP ---
+const STATE = {
+  apiKey: localStorage.getItem('gemini_api_key') || '',
+  imageB64: null
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!STATE.apiKey) document.getElementById('api-modal').classList.remove('hidden');
+});
+
+document.getElementById('save-key-btn').onclick = () => {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (key) { STATE.apiKey = key; localStorage.setItem('gemini_api_key', key); document.getElementById('api-modal').classList.add('hidden'); }
+};
+
+function resetKey() { localStorage.removeItem('gemini_api_key'); location.reload(); }
+
+// --- TAB NAVIGATION ---
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.onclick = (e) => {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    e.target.closest('button').classList.add('active');
+    document.getElementById(e.target.closest('button').dataset.target).classList.add('active');
+  };
+});
+
+// --- API HELPER FUNCTIONS ---
+function cleanJsonString(str) {
+  let cleaned = str.trim();
+  if (cleaned.startsWith('```json')) cleaned = cleaned.replace(/^```json/, '');
+  if (cleaned.startsWith('```')) cleaned = cleaned.replace(/^```/, '');
+  if (cleaned.endsWith('```')) cleaned = cleaned.replace(/```$/, '');
+  return cleaned.trim();
+}
+
+async function callGemini(base64, prompt) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=\${STATE.apiKey}`;
+  const response = await fetch(url, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: "image/jpeg", data: base64 } }] }],
+      generationConfig: { response_mime_type: "application/json" }
+    })
+  });
+  if (!response.ok) throw new Error("API Error (Might be high demand. Try again in 1 min).");
+  const data = await response.json();
+  return JSON.parse(cleanJsonString(data.candidates[0].content.parts[0].text));
+}
+
+async function callGeminiText(prompt, expectJson = true) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=\${STATE.apiKey}`;
+  const config = expectJson ? { response_mime_type: "application/json" } : {};
+  const response = await fetch(url, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: config })
+  });
+  if (!response.ok) throw new Error("API Error (Might be high demand. Try again in 1 min).");
+  const data = await response.json();
+  const text = data.candidates[0].content.parts[0].text;
+  return expectJson ? JSON.parse(cleanJsonString(text)) : text;
+}
+
+// --- 1. DIAGNOSE LOGIC ---
+document.getElementById('upload-zone').onclick = () => document.getElementById('file-input').click();
+document.getElementById('file-input').onchange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    STATE.imageB64 = ev.target.result.split(',')[1];
+    document.getElementById('preview-img').src = ev.target.result;
+    document.getElementById('upload-zone').classList.add('hidden');
+    document.getElementById('preview-section').classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
+};
+
+document.getElementById('analyze-btn').onclick = async () => {
+  document.getElementById('preview-section').classList.add('hidden');
+  document.getElementById('diagnose-loader').classList.remove('hidden');
+  const prompt = `Analyze this crop. Return ONLY JSON: {"cropName":"Name","emoji":"🌱","healthScore":85,"status":"Healthy/Diseased","diseases":[{"name":"Name","treatment":"Action"}],"actionPlan":["Step 1"]}`;
+  try {
+    const data = await callGemini(STATE.imageB64, prompt);
+    document.getElementById('diagnose-result').innerHTML = `
+      <div class="result-hero"><h1>\${data.emoji} \${data.cropName}</h1><p>Status: \${data.status} | Health: \${data.healthScore}%</p></div>
+      <div class="result-grid">
+        <div class="r-card"><h3>Issues</h3>\${data.diseases.map(d=>`<p><b>\${d.name}</b><br>\${d.treatment}</p>`).join('')||'None'}</div>
+        <div class="r-card"><h3>Action Plan</h3><ul>\${data.actionPlan.map(s=>`<li>\${s}</li>`).join('')}</ul></div>
+      </div>
+      <button class="btn-primary" onclick="location.reload()" style="margin-top:1rem;">Scan Another</button>
+    `;
+    document.getElementById('diagnose-result').classList.remove('hidden');
+  } catch (e) { alert(e.message); document.getElementById('preview-section').classList.remove('hidden'); }
+  finally { document.getElementById('diagnose-loader').classList.add('hidden'); }
+};
+
+// --- 2. WEATHER LOGIC ---
+document.getElementById('weather-btn').onclick = async () => {
+  const loc = document.getElementById('loc-input').value;
+  if(!loc) return;
+  document.getElementById('weather-loader').classList.remove('hidden');
+  document.getElementById('weather-result').classList.add('hidden');
+  const prompt = `Act as an agricultural meteorologist for \${loc}. Return ONLY JSON: {"temp":30,"condition":"Sunny","irrigationAdvice":"Water today","forecast":[{"day":"Tomorrow","high":32,"cond":"Hot"}]}`;
+  try {
+    const data = await callGeminiText(prompt, true);
+    document.getElementById('weather-result').innerHTML = `
+      <div class="result-hero"><h1>🌡️ \${data.temp}°C - \${data.condition}</h1><p>\${data.irrigationAdvice}</p></div>
+      <div class="result-grid">\${data.forecast.map(f=>`<div class="r-card" style="text-align:center;"><b>\${f.day}</b><br>\${f.high}°C<br>\${f.cond}</div>`).join('')}</div>
+    `;
+    document.getElementById('weather-result').classList.remove('hidden');
+  } catch (e) { alert(e.message); }
+  finally { document.getElementById('weather-loader').classList.add('hidden'); }
+};
+
+// --- 3. PLANNER LOGIC ---
+document.getElementById('planner-btn').onclick = async () => {
+  const crop = document.getElementById('crop-input').value;
+  const region = document.getElementById('region-input').value;
+  if(!crop || !region) return;
+  document.getElementById('planner-loader').classList.remove('hidden');
+  document.getElementById('planner-result').classList.add('hidden');
+  const prompt = `Create a crop plan for \${crop} in \${region}. Return JSON: {"crop":"\${crop}","days":120,"phases":[{"phase":"Sowing","tasks":["Task 1"]}]}`;
+  try {
+    const data = await callGeminiText(prompt, true);
+    document.getElementById('planner-result').innerHTML = `
+      <div class="result-hero"><h1>📅 \${data.crop} Plan</h1><p>Total Duration: \${data.days} days</p></div>
+      \${data.phases.map(p=>`<div class="r-card full" style="margin-bottom:10px;"><h3>\${p.phase}</h3><ul>\${p.tasks.map(t=>`<li>\${t}</li>`).join('')}</ul></div>`).join('')}
+    `;
+    document.getElementById('planner-result').classList.remove('hidden');
+  } catch (e) { alert(e.message); }
+  finally { document.getElementById('planner-loader').classList.add('hidden'); }
+};
+
+// --- 4. LIBRARY LOGIC ---
+document.getElementById('library-btn').onclick = async () => {
+  const q = document.getElementById('query-input').value;
+  if(!q) return;
+  document.getElementById('library-loader').classList.remove('hidden');
+  document.getElementById('library-result').classList.add('hidden');
+  const prompt = `You are a farming expert. Answer this practically: "\${q}". Format answer in HTML using <h3>, <p>, <ul>. No markdown tags.`;
+  try {
+    const data = await callGeminiText(prompt, false);
+    document.getElementById('library-result').innerHTML = `<div class="library-answer">\${data}</div>`;
+    document.getElementById('library-result').classList.remove('hidden');
+  } catch (e) { alert(e.message); }
+  finally { document.getElementById('library-loader').classList.add('hidden'); }
+};
+</script>
+</body>
+</html>

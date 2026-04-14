@@ -37,9 +37,9 @@ body { font-family: var(--font-body); background: var(--neutral-50); color: var(
   border: 1.5px solid var(--neutral-100); border-radius: var(--radius-md); padding: 12px; outline: none; margin-bottom: 10px;
 }
 
-.modal-overlay { 
-  position: fixed; inset: 0; z-index: 1000; background: rgba(10,13,11,0.8); 
-  backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; 
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000; background: rgba(10,13,11,0.8);
+  backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center;
 }
 .modal-box { background: var(--white); border-radius: var(--radius-xl); padding: 2.5rem; max-width: 440px; width: 90%; box-shadow: var(--shadow-lg); text-align: center; }
 
@@ -108,7 +108,7 @@ body { font-family: var(--font-body); background: var(--neutral-50); color: var(
   </aside>
 
   <main class="main-content">
-    
+
     <section id="tab-diagnose" class="tab-panel active">
       <h2 style="font-family: var(--font-display); font-size: 26px; margin-bottom: 1.5rem;">Crop Diagnosis</h2>
       <div class="upload-zone" id="upload-zone">
@@ -171,14 +171,14 @@ body { font-family: var(--font-body); background: var(--neutral-50); color: var(
 <script>
 // Everything wrapped inside window.onload to guarantee it runs safely
 window.onload = function() {
-  
+
   // --- STATE ---
   let apiKey = "";
   let imageB64 = null;
 
   // --- MODAL & KEY LOGIC ---
   const modal = document.getElementById("api-modal");
-  
+
   try {
     apiKey = localStorage.getItem("crop_gemini_key") || "";
   } catch (e) {
@@ -215,7 +215,7 @@ window.onload = function() {
       btn.onclick = function() {
         navItems.forEach(function(n) { n.classList.remove("active"); });
         panels.forEach(function(p) { p.classList.remove("active"); });
-        
+
         this.classList.add("active");
         document.getElementById(this.dataset.target).classList.add("active");
       };
@@ -235,7 +235,7 @@ window.onload = function() {
   async function callAI(base64, prompt) {
     if (!apiKey) { alert("API Key missing"); return null; }
     const url = "[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=)" + apiKey;
-    
+
     const parts = [{ text: prompt }];
     if (base64) {
       parts.push({ inline_data: { mime_type: "image/jpeg", data: base64 } });
@@ -260,7 +260,7 @@ window.onload = function() {
   async function callAIText(prompt, wantJSON) {
     if (!apiKey) { alert("API Key missing"); return null; }
     const url = "[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=)" + apiKey;
-    
+
     const payload = { contents: [{ parts: [{ text: prompt }] }] };
     if (wantJSON) {
       payload.generationConfig = { response_mime_type: "application/json" };
@@ -299,14 +299,14 @@ window.onload = function() {
   document.getElementById("analyze-btn").onclick = async function() {
     document.getElementById("preview-section").style.display = "none";
     document.getElementById("diagnose-loader").style.display = "block";
-    
+
     const p = 'Analyze this crop. Return JSON format: {"cropName":"Name","emoji":"🌱","healthScore":85,"status":"Healthy","diseases":[{"name":"N/A","treatment":"None"}],"actionPlan":["Step 1"]}';
-    
+
     try {
       const data = await callAI(imageB64, p);
       if (data) {
         let html = '<div class="result-hero"><h1>' + data.emoji + ' ' + data.cropName + '</h1><p>Status: ' + data.status + ' | Health: ' + data.healthScore + '%</p></div><div class="result-grid">';
-        
+
         html += '<div class="r-card"><h3>Issues</h3>';
         if(data.diseases && data.diseases.length > 0) {
            data.diseases.forEach(function(d) { html += '<p><b>' + d.name + '</b><br>' + d.treatment + '</p>'; });
@@ -336,12 +336,12 @@ window.onload = function() {
   document.getElementById("weather-btn").onclick = async function() {
     const loc = document.getElementById("loc-input").value;
     if(!loc) return;
-    
+
     document.getElementById("weather-loader").style.display = "block";
     document.getElementById("weather-result").style.display = "none";
-    
+
     const p = 'Act as meteorologist for ' + loc + '. Return JSON: {"temp":30,"condition":"Sunny","advice":"Water today","forecast":[{"day":"Tomorrow","high":32,"cond":"Hot"}]}';
-    
+
     try {
       const data = await callAIText(p, true);
       if (data) {
@@ -364,12 +364,12 @@ window.onload = function() {
     const crop = document.getElementById("crop-input").value;
     const region = document.getElementById("region-input").value;
     if(!crop || !region) return;
-    
+
     document.getElementById("planner-loader").style.display = "block";
     document.getElementById("planner-result").style.display = "none";
-    
+
     const p = 'Create crop plan for ' + crop + ' in ' + region + '. Return JSON: {"crop":"' + crop + '","days":120,"phases":[{"phase":"Sowing","tasks":["Task 1"]}]}';
-    
+
     try {
       const data = await callAIText(p, true);
       if (data) {
@@ -391,10 +391,10 @@ window.onload = function() {
   document.getElementById("library-btn").onclick = async function() {
     const q = document.getElementById("query-input").value;
     if(!q) return;
-    
+
     document.getElementById("library-loader").style.display = "block";
     document.getElementById("library-result").style.display = "none";
-    
+
     const p = 'Answer practically: "' + q + '". Format in HTML using <h3>, <p>, <ul>. No markdown tags.';
     try {
       const data = await callAIText(p, false);

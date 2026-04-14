@@ -2,7 +2,7 @@
 
 **AI-powered crop detection, disease analysis, and agricultural intelligence platform for Indian farmers.**
 
-Built by [@roshanUghade](https://github.com/roshanUghade) · Powered by Claude AI (Anthropic)
+Built by [@roshanUghade](https://github.com/roshanUghade) · Powered by Gemini
 
 ---
 
@@ -32,7 +32,7 @@ Built by [@roshanUghade](https://github.com/roshanUghade) · Powered by Claude A
 ### Option 1: Use Directly (No Installation)
 1. Download or clone this repo
 2. Open `index.html` in your browser
-3. Enter your [Anthropic API key](https://console.anthropic.com) when prompted
+3. Enter your [Gemini API Key](https://aistudio.google.com/api-keys) when prompted
 4. Upload a crop photo and start analyzing!
 
 ### Option 2: GitHub Pages (Live Website)
@@ -44,10 +44,10 @@ Your app will be live at: `https://roshanUghade.github.io/cropsense-ai`
 
 ## 🔑 API Key Setup
 
-1. Go to [console.anthropic.com](https://console.anthropic.com)
+1.Go to (https://aistudio.google.com/api-keys)
 2. Create an account and generate an API key
 3. Paste it into the app when prompted on first launch
-4. The key is stored **only in your browser's localStorage** — never on any server
+4. The key is stored **only in your browser's localStorage 
 
 ---
 

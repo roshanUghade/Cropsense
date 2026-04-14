@@ -169,7 +169,6 @@ body { font-family: var(--font-body); background: var(--neutral-50); color: var(
 </div>
 
 <script>
-// Everything wrapped inside window.onload to guarantee it runs safely
 window.onload = function() {
 
   // --- STATE ---
@@ -205,7 +204,6 @@ window.onload = function() {
     location.reload();
   };
 
-
   // --- TAB NAVIGATION ---
   const navItems = document.querySelectorAll(".nav-item");
   const panels = document.querySelectorAll(".tab-panel");
@@ -221,7 +219,6 @@ window.onload = function() {
       };
     }
   });
-
 
   // --- API FUNCTIONS ---
   function cleanJSON(str) {
@@ -252,7 +249,11 @@ window.onload = function() {
       body: JSON.stringify(payload)
     });
 
-    if (!response.ok) throw new Error("API failed. High demand or bad key.");
+    if (!response.ok) {
+      const err = await response.json().catch(()=>({}));
+      // Show the REAL error message from Google so we know what is failing!
+      throw new Error("Google API Error: " + (err.error?.message || "Code " + response.status));
+    }
     const data = await response.json();
     return JSON.parse(cleanJSON(data.candidates[0].content.parts[0].text));
   }
@@ -272,7 +273,11 @@ window.onload = function() {
       body: JSON.stringify(payload)
     });
 
-    if (!response.ok) throw new Error("API failed. High demand or bad key.");
+    if (!response.ok) {
+      const err = await response.json().catch(()=>({}));
+      // Show the REAL error message from Google
+      throw new Error("Google API Error: " + (err.error?.message || "Code " + response.status));
+    }
     const data = await response.json();
     const text = data.candidates[0].content.parts[0].text;
     return wantJSON ? JSON.parse(cleanJSON(text)) : text;
@@ -331,7 +336,6 @@ window.onload = function() {
     }
   };
 
-
   // --- 2. WEATHER ---
   document.getElementById("weather-btn").onclick = async function() {
     const loc = document.getElementById("loc-input").value;
@@ -357,7 +361,6 @@ window.onload = function() {
     } catch (err) { alert(err.message); }
     finally { document.getElementById("weather-loader").style.display = "none"; }
   };
-
 
   // --- 3. PLANNER ---
   document.getElementById("planner-btn").onclick = async function() {

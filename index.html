@@ -226,7 +226,7 @@
     /* --- CORE API HANDLER --- */
     async function callGemini(prompt, base64 = null) {
         // v1beta endpoint specifically for Gemini 1.5 Flash models
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${STATE.apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${STATE.apiKey}`;
         
         const parts = [{ text: prompt }];
         if (base64) parts.push({ inline_data: { mime_type: "image/jpeg", data: base64 } });

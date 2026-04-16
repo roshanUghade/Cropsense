@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CropSense AI — Professional Edition</title>
+    <title>CropSense AI — Ultimate Edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
         :root {
             --green-950: #06140d; --green-900: #0d291a; --green-800: #16402b;
             --green-700: #1e5c3e; --green-600: #298055; --green-500: #3db87a;
-            --green-400: #65cca1; --green-50:  #ebf7f1;
+            --green-400: #65cca1; --green-300: #86efac; --green-50:  #ebf7f1;
             
             --surface-bg: #f4f7f6;
             --card-bg: rgba(255, 255, 255, 0.85);
@@ -27,7 +27,7 @@
             
             --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.05);
             --shadow-float: 0 20px 40px -10px rgba(30, 92, 62, 0.15);
-            --shadow-glow: 0 0 20px rgba(61, 184, 122, 0.3);
+            --shadow-glow: 0 0 30px rgba(61, 184, 122, 0.4);
         }
 
         /* ── Reset & Base ── */
@@ -44,45 +44,85 @@
         }
         .hidden { display: none !important; }
 
+        /* ── LANDING PAGE HERO ── */
+        .landing-page {
+            position: fixed; inset: 0; z-index: 2000;
+            background: radial-gradient(circle at 50% 0%, #16402b 0%, #06140d 100%);
+            display: flex; flex-direction: column;
+            color: white; overflow-y: auto;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .landing-page.fade-out { opacity: 0; transform: scale(1.02); pointer-events: none; }
+        
+        .landing-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 2rem 4rem; width: 100%;
+        }
+        .landing-logo { font-family: var(--font-display); font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .btn-outline {
+            background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white;
+            padding: 10px 20px; border-radius: 100px; font-family: var(--font-body); font-size: 14px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: white; }
+
+        .hero-content {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 2rem 1rem 6rem 1rem; max-width: 1000px; margin: 0 auto;
+        }
+        .hero-badge {
+            border: 1px solid rgba(101, 204, 161, 0.3); background: rgba(101, 204, 161, 0.1);
+            color: var(--green-400); padding: 6px 16px; border-radius: 100px;
+            font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+        .hero-title {
+            font-family: var(--font-display); font-size: clamp(3.5rem, 8vw, 6.5rem); 
+            line-height: 1.1; font-weight: 800; letter-spacing: -2px; margin-bottom: 1.5rem;
+        }
+        .hero-title span { color: var(--green-300); }
+        .hero-subtitle { font-size: 1.15rem; color: #9ca3af; max-width: 600px; margin-bottom: 2.5rem; line-height: 1.6; }
+        
+        .hero-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 3.5rem; }
+        .hero-chip {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            padding: 8px 18px; border-radius: 100px; font-size: 14px; color: #d1d5db;
+            display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px);
+        }
+
         /* ── Premium Components ── */
         .btn-primary {
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            background: linear-gradient(135deg, var(--green-600), var(--green-700));
-            color: white; border: none; border-radius: var(--radius-md);
-            font-family: var(--font-body); font-size: 15px; font-weight: 600; 
-            padding: 14px 28px; cursor: pointer;
+            background: linear-gradient(135deg, var(--green-500), var(--green-700));
+            color: white; border: none; border-radius: 100px;
+            font-family: var(--font-body); font-size: 16px; font-weight: 600; 
+            padding: 16px 32px; cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-float); white-space: nowrap;
         }
         .btn-primary:hover { 
-            transform: translateY(-2px); 
-            box-shadow: var(--shadow-glow); 
-            background: linear-gradient(135deg, var(--green-500), var(--green-600));
+            transform: translateY(-2px); box-shadow: var(--shadow-glow); 
+            background: linear-gradient(135deg, var(--green-400), var(--green-600));
         }
-        .btn-primary:active { transform: translateY(0); }
-        .btn-primary.large { font-size: 16px; padding: 18px 36px; border-radius: var(--radius-lg); }
-        .btn-primary.full-width { width: 100%; }
+        .btn-primary.large { font-size: 18px; padding: 18px 40px; }
+        .btn-primary.full-width { width: 100%; border-radius: var(--radius-md); }
 
         .input-field {
-            width: 100%; font-family: var(--font-body); font-size: 15px; 
+            width: 100%; font-family: var(--font-body); font-size: 15px; color: var(--text-main);
             background: rgba(255, 255, 255, 0.9);
             border: 2px solid transparent; border-radius: var(--radius-md); 
             padding: 16px; outline: none; margin-bottom: 16px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-            transition: all 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); transition: all 0.2s;
         }
-        .input-field:focus { 
-            border-color: var(--green-400); 
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(101, 204, 161, 0.15);
-        }
+        select.input-field { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
+        .input-field:focus { border-color: var(--green-400); background: #ffffff; box-shadow: 0 0 0 4px rgba(101, 204, 161, 0.15); }
 
         /* Glassmorphism Modal */
         .modal-overlay { 
-            position: fixed; inset: 0; z-index: 1000; 
-            background: rgba(6, 20, 13, 0.6); backdrop-filter: blur(12px); 
+            position: fixed; inset: 0; z-index: 3000; 
+            background: rgba(6, 20, 13, 0.8); backdrop-filter: blur(12px); 
             display: flex; align-items: center; justify-content: center; 
-            animation: fadeIn 0.4s ease-out;
+            animation: fadeIn 0.3s ease-out;
         }
         .modal-box { 
             background: white; border-radius: var(--radius-xl); 
@@ -90,7 +130,7 @@
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); text-align: center; 
         }
 
-        /* ── Modern Layout ── */
+        /* ── Modern App Layout ── */
         .app { display: flex; min-height: 100vh; padding: 1.5rem; gap: 1.5rem; }
         
         .sidebar { 
@@ -103,7 +143,7 @@
             padding: 2.5rem 2rem; font-family: var(--font-display); 
             font-size: 24px; font-weight: 800; letter-spacing: -0.5px; 
             background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
-            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer;
         }
         .sidebar-nav { flex: 1; padding: 2rem 1.5rem; display: flex; flex-direction: column; gap: 10px; }
         .nav-item { 
@@ -112,10 +152,7 @@
             color: #9ca3af; cursor: pointer; text-align: left; font-size: 15px; font-weight: 500;
             width: 100%; transition: all 0.3s ease;
         }
-        .nav-item.active { 
-            background: rgba(255, 255, 255, 0.1); color: white; font-weight: 600; 
-            box-shadow: inset 4px 0 0 var(--green-400);
-        }
+        .nav-item.active { background: rgba(255, 255, 255, 0.1); color: white; font-weight: 600; box-shadow: inset 4px 0 0 var(--green-400); }
         .nav-item:hover:not(.active) { background: rgba(255,255,255,0.05); color: white; transform: translateX(4px); }
         
         .main-content { 
@@ -128,10 +165,7 @@
         .tab-panel { display: none; }
         .tab-panel.active { display: block; animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         
-        @keyframes slideUpFade { 
-            from { opacity: 0; transform: translateY(20px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* ── Interface Features ── */
@@ -144,10 +178,7 @@
             background: rgba(61, 184, 122, 0.05); padding: 5rem 2rem; 
             text-align: center; cursor: pointer; transition: all 0.3s ease; 
         }
-        .upload-zone:hover { 
-            background: rgba(61, 184, 122, 0.1); border-color: var(--green-600); 
-            transform: scale(1.01); 
-        }
+        .upload-zone:hover { background: rgba(61, 184, 122, 0.1); border-color: var(--green-600); transform: scale(1.01); }
         
         .result-hero { 
             background: linear-gradient(135deg, var(--green-800), var(--green-950)); 
@@ -155,19 +186,14 @@
             margin-bottom: 2rem; position: relative; overflow: hidden;
             box-shadow: 0 20px 40px -10px rgba(13, 41, 26, 0.4);
         }
-        .result-hero::after {
-            content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
-            background: radial-gradient(circle at top right, rgba(255,255,255,0.1), transparent 50%);
-            pointer-events: none;
-        }
-        
         .r-card { 
             background: white; padding: 2rem; border-radius: var(--radius-lg); 
             border: 1px solid rgba(0,0,0,0.05); box-shadow: var(--shadow-soft); 
             height: 100%; transition: transform 0.3s ease;
         }
         .r-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-float); }
-        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .result-grid.wide { grid-template-columns: 1fr; }
         
         .leaf-spin { 
             font-size: 4rem; display: inline-block; 
@@ -177,39 +203,66 @@
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); } 50% { opacity: 0.8; transform: scale(1.1) rotate(180deg); } }
 
-        /* ── Mobile View Adjustments ── */
+        /* ── Detailed UI Elements ── */
+        .detail-badge { display: inline-block; padding: 4px 10px; background: var(--green-50); color: var(--green-700); border-radius: 6px; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+        .detail-list { padding-left: 20px; color: var(--text-main); line-height: 1.8; }
+        .detail-list li { margin-bottom: 8px; }
+        .section-title { font-family: var(--font-display); font-size: 22px; color: var(--green-900); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
         @media (max-width: 900px) {
+            .landing-nav { padding: 1.5rem 2rem; }
+            .hero-title { font-size: clamp(2.5rem, 10vw, 4rem); }
             .app { flex-direction: column; padding: 0; gap: 0; }
-            .sidebar { 
-                width: 100%; border-radius: 0; height: auto; position: relative; top: 0;
-                padding-bottom: 0;
-            }
+            .sidebar { width: 100%; border-radius: 0; height: auto; position: relative; top: 0; padding-bottom: 0; }
             .sidebar-logo { text-align: center; padding: 1.5rem; }
             .sidebar-nav { flex-direction: row; overflow-x: auto; padding: 1rem; gap: 10px; }
             .nav-item { white-space: nowrap; width: auto; padding: 12px 20px; box-shadow: none !important; }
             .nav-item.active { background: rgba(255,255,255,0.15); border-radius: 100px; }
-            .main-content { margin: 1rem; border-radius: var(--radius-xl); padding: 2rem; }
+            .main-content { margin: 1rem; border-radius: var(--radius-xl); padding: 1.5rem; }
             .result-hero { padding: 2rem; }
-            .section-header h2 { font-size: 28px; }
         }
     </style>
 </head>
 <body>
 
-<div id="api-modal" class="modal-overlay">
-    <div class="modal-box">
-        <div style="font-size:4rem; margin-bottom:1rem; line-height: 1;">✨</div>
-        <h2 style="font-family: var(--font-display); font-size: 28px; margin-bottom: 0.5rem; color: var(--green-950);">Welcome to CropSense</h2>
-        <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 2.5rem;">Connect your Gemini AI core to activate intelligent systems.</p>
-        <input type="password" id="api-key-input" class="input-field" placeholder="Paste your API key securely..." autocomplete="off">
-        <button class="btn-primary large full-width" id="save-key-btn">Initialize Workspace</button>
-        <p style="margin-top: 1.5rem; font-size: 13px; color: var(--text-muted); font-weight: 500;">Design & Architecture by Roshan Ughade</p>
+<div id="landing-page" class="landing-page">
+    <nav class="landing-nav">
+        <div class="landing-logo">🌱 CropSense<span style="color: var(--green-400); font-weight: 400;">AI</span></div>
+        <button class="btn-outline" onclick="openApiModal()">API Key</button>
+    </nav>
+    <div class="hero-content">
+        <div class="hero-badge">Powered by Gemini AI</div>
+        <h1 class="hero-title">Know Your Crop <br><span>Inside Out</span></h1>
+        <p class="hero-subtitle">Upload any crop photo and get instant, highly detailed disease diagnosis, tailored precision fertilizer plans, and long-term preventative strategies.</p>
+        
+        <div class="hero-chips">
+            <div class="hero-chip">🔬 Deep Disease Diagnosis</div>
+            <div class="hero-chip">🧪 Fertilizer Plans</div>
+            <div class="hero-chip">🛡️ Preventative Care</div>
+            <div class="hero-chip">☁️ Weather Alerts</div>
+        </div>
+        
+        <button class="btn-primary large" onclick="enterApp()">Start Analyzing &rarr;</button>
     </div>
 </div>
 
-<div id="app" class="app">
+<div id="api-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div style="font-size:4rem; margin-bottom:1rem; line-height: 1;">⚡</div>
+        <h2 style="font-family: var(--font-display); font-size: 28px; margin-bottom: 0.5rem; color: var(--green-950);">System Access</h2>
+        <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 2.5rem;">Connect your Gemini AI Key to activate intelligent agricultural systems.</p>
+        <input type="password" id="api-key-input" class="input-field" placeholder="Paste your API key securely..." autocomplete="off">
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-primary full-width" id="save-key-btn">Initialize</button>
+            <button class="btn-primary full-width" style="background: #e5e7eb; color: #374151; box-shadow: none;" onclick="closeApiModal()">Cancel</button>
+        </div>
+        <p style="margin-top: 1.5rem; font-size: 13px; color: var(--text-muted); font-weight: 500;">Designed & Maintained by Roshan Ughade</p>
+    </div>
+</div>
+
+<div id="app" class="app hidden">
     <aside class="sidebar">
-        <div class="sidebar-logo">🌱 CropSense<span style="color: var(--green-400); font-weight: 400;">AI</span></div>
+        <div class="sidebar-logo" onclick="location.reload()">🌱 CropSense<span style="color: var(--green-400); font-weight: 400;">AI</span></div>
         <nav class="sidebar-nav">
             <button class="nav-item active" data-target="tab-diagnose"><span>🔍</span> Diagnostic Scanner</button>
             <button class="nav-item" data-target="tab-weather"><span>☁️</span> Climate Analytics</button>
@@ -217,7 +270,7 @@
             <button class="nav-item" data-target="tab-library"><span>📚</span> Knowledge Core</button>
             <div style="flex-grow: 1;"></div>
             <button id="reset-btn" class="nav-item" style="color: #f87171; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; margin-top: 10px;">
-                <span>⚙️</span> Disconnect System
+                <span>⚙️</span> Reset System
             </button>
         </nav>
     </aside>
@@ -227,7 +280,7 @@
         <section id="tab-diagnose" class="tab-panel active">
             <div class="section-header">
                 <h2>Botanical Diagnostics</h2>
-                <p>Upload high-resolution imagery for instant AI disease detection and health scoring.</p>
+                <p>Upload high-resolution imagery for an in-depth analysis of diseases, nutrition, and care.</p>
             </div>
             
             <div class="upload-zone" id="upload-zone">
@@ -242,15 +295,15 @@
                     <img id="preview-img" style="width: 100%; max-height: 500px; object-fit: contain; border-radius: calc(var(--radius-md) - 4px);">
                 </div>
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button class="btn-primary large" style="flex: 2; min-width: 250px;" id="analyze-btn">Run Deep Analysis</button>
-                    <button class="btn-primary large" style="flex: 1; background: #e5e7eb; color: #374151; box-shadow: none; min-width: 150px;" onclick="location.reload()">Clear</button>
+                    <button class="btn-primary large" style="flex: 2; border-radius: var(--radius-md);" id="analyze-btn">Run Deep Analysis</button>
+                    <button class="btn-primary large" style="flex: 1; background: #e5e7eb; color: #374151; box-shadow: none; border-radius: var(--radius-md);" onclick="resetDiagnose()">Clear</button>
                 </div>
             </div>
 
             <div id="diagnose-loader" class="hidden" style="text-align: center; padding: 6rem 2rem;">
                 <div class="leaf-spin">🌿</div>
                 <h3 style="font-family: var(--font-display); font-size: 24px; color: var(--green-900); margin-bottom: 8px;">Processing Neural Network...</h3>
-                <p class="status-text" style="color: var(--text-muted); font-size: 16px;">Identifying microscopic pathogens and species markers</p>
+                <p class="status-text" style="color: var(--text-muted); font-size: 16px;">Identifying pathogens, soil deficiencies, and compiling treatment data...</p>
             </div>
 
             <div id="diagnose-result" class="hidden"></div>
@@ -263,8 +316,8 @@
             </div>
             <div class="r-card" style="margin-bottom: 2rem; background: rgba(255,255,255,0.5);">
                 <div style="display: flex; gap: 15px; align-items: stretch; flex-wrap: wrap;">
-                    <input type="text" id="loc-input" class="input-field" style="margin-bottom: 0; flex: 1; min-width: 250px;" placeholder="Enter Region (e.g., Pune, Maharashtra)">
-                    <button class="btn-primary" id="weather-btn">Fetch Telemetry</button>
+                    <input type="text" id="loc-input" class="input-field" style="margin-bottom: 0; flex: 1;" placeholder="Enter Region (e.g., Pune, Maharashtra)">
+                    <button class="btn-primary" style="border-radius: var(--radius-md);" id="weather-btn">Fetch Telemetry</button>
                 </div>
             </div>
             <div id="weather-loader" class="hidden" style="text-align: center; padding: 5rem 2rem;">
@@ -277,17 +330,27 @@
         <section id="tab-planner" class="tab-panel">
             <div class="section-header">
                 <h2>Strategic Planner</h2>
-                <p>Generate comprehensive, AI-driven roadmaps from sowing to optimal harvest.</p>
+                <p>Generate comprehensive, AI-driven roadmaps based on your crop and local soil conditions.</p>
             </div>
             <div class="r-card" style="background: rgba(255,255,255,0.5);">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px;">
                     <div>
                         <label style="font-size: 14px; font-weight: 600; color: var(--green-800); margin-bottom: 8px; display: block;">Target Cultivar</label>
-                        <input type="text" id="crop-input" class="input-field" placeholder="e.g., Soybeans">
+                        <input type="text" id="crop-input" class="input-field" placeholder="e.g., Soybeans, Wheat">
                     </div>
                     <div>
-                        <label style="font-size: 14px; font-weight: 600; color: var(--green-800); margin-bottom: 8px; display: block;">Soil & Environment Profile</label>
-                        <input type="text" id="region-input" class="input-field" placeholder="e.g., Black Cotton Soil">
+                        <label style="font-size: 14px; font-weight: 600; color: var(--green-800); margin-bottom: 8px; display: block;">Local Soil Type</label>
+                        <select id="region-input" class="input-field">
+                            <option value="">Select a soil type...</option>
+                            <option value="Alluvial Soil">Alluvial Soil (River plains)</option>
+                            <option value="Black Cotton Soil">Black Cotton Soil (Regur)</option>
+                            <option value="Red & Yellow Soil">Red & Yellow Soil</option>
+                            <option value="Laterite Soil">Laterite Soil</option>
+                            <option value="Arid / Desert Soil">Arid / Desert Soil</option>
+                            <option value="Saline / Alkaline Soil">Saline / Alkaline Soil</option>
+                            <option value="Peaty / Marshy Soil">Peaty / Marshy Soil</option>
+                            <option value="Unknown Soil Type">I'm not sure / Unknown</option>
+                        </select>
                     </div>
                 </div>
                 <button class="btn-primary full-width large" id="planner-btn">Synthesize Growth Strategy</button>
@@ -305,8 +368,8 @@
                 <p>Query the advanced agricultural database for instant, expert-level insights.</p>
             </div>
             <div style="display: flex; gap: 15px; margin-bottom: 2rem; flex-wrap: wrap;">
-                <input type="text" id="query-input" class="input-field" style="margin-bottom: 0; flex: 1; min-width: 250px;" placeholder="Ask a technical query (e.g., Nitrogen deficiency symptoms in Rice?)">
-                <button class="btn-primary large" id="library-btn">Query System</button>
+                <input type="text" id="query-input" class="input-field" style="margin-bottom: 0; flex: 1;" placeholder="Ask a technical query (e.g., Nitrogen deficiency symptoms in Rice?)">
+                <button class="btn-primary large" style="border-radius: var(--radius-md);" id="library-btn">Query System</button>
             </div>
             <div id="library-loader" class="hidden" style="text-align: center; padding: 5rem 2rem;">
                 <div class="leaf-spin">📚</div>
@@ -319,30 +382,54 @@
 </div>
 
 <script>
-    /* --- SYSTEM INITIALIZATION --- */
-    let STATE = { apiKey: localStorage.getItem('cs_v7_key') || '', imgB64: null };
-    const MODAL = document.getElementById('api-modal');
+    /* --- STATE & ROUTING --- */
+    let STATE = { apiKey: localStorage.getItem('cs_ultimate_key') || '', imgB64: null };
+    const landingPage = document.getElementById('landing-page');
+    const appContainer = document.getElementById('app');
+    const apiModal = document.getElementById('api-modal');
 
-    if (STATE.apiKey) MODAL.classList.add('hidden');
+    // UI Flow Logic
+    function enterApp() {
+        if (!STATE.apiKey) {
+            openApiModal();
+        } else {
+            transitionToApp();
+        }
+    }
+
+    function transitionToApp() {
+        landingPage.classList.add('fade-out');
+        setTimeout(() => {
+            landingPage.classList.add('hidden');
+            appContainer.classList.remove('hidden');
+        }, 600);
+    }
+
+    function openApiModal() { apiModal.classList.remove('hidden'); }
+    function closeApiModal() { apiModal.classList.add('hidden'); }
+
+    // If key is saved, maybe we still want to show the beautiful landing page? 
+    // Yes, let user click "Start Analyzing" to enter.
 
     document.getElementById('save-key-btn').onclick = () => {
         const val = document.getElementById('api-key-input').value.trim();
         if(val.startsWith('AIza')) { 
             STATE.apiKey = val; 
-            localStorage.setItem('cs_v7_key', val); 
-            MODAL.classList.add('hidden'); 
+            localStorage.setItem('cs_ultimate_key', val); 
+            closeApiModal();
+            transitionToApp();
         } else {
-            alert("Please enter a valid Google Gemini API Key starting with 'AIza'.");
+            alert("Please enter a valid Google Gemini API Key.");
         }
     };
 
     document.getElementById('reset-btn').onclick = () => { 
-        if(confirm("This will securely purge your API key from the browser. Proceed?")) {
+        if(confirm("This will securely purge your API key and return to the home screen. Proceed?")) {
             localStorage.clear(); location.reload(); 
         }
     };
 
-    /* --- NAVIGATION ENGINE --- */
+    /* --- NAVIGATION --- */
     document.querySelectorAll('.nav-item').forEach(btn => {
         if(btn.id === 'reset-btn') return;
         btn.onclick = () => {
@@ -354,10 +441,9 @@
         };
     });
 
-    /* --- CORE API HANDLER (WITH AUTO-RETRY LOGIC) --- */
+    /* --- GEMINI API ENGINE (WITH AUTO-RETRY) --- */
     async function callGemini(prompt, base64 = null, maxRetries = 3) {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${STATE.apiKey}`;
-        
         const parts = [{ text: prompt }];
         if (base64) parts.push({ inline_data: { mime_type: "image/jpeg", data: base64 } });
 
@@ -375,27 +461,21 @@
                     const error = await response.json();
                     if (response.status === 503 || response.status === 429) {
                         if (attempt < maxRetries) {
-                            console.warn(`Server busy. Retrying in ${delay/1000}s... (Attempt ${attempt})`);
                             const activeStatusText = document.querySelector('.tab-panel.active .status-text');
                             if (activeStatusText) {
                                 activeStatusText.innerText = `Network congested. Re-routing request... (Attempt ${attempt})`;
                                 activeStatusText.style.color = '#d97706'; 
                             }
                             await new Promise(res => setTimeout(res, delay));
-                            delay *= 2; 
-                            continue;
+                            delay *= 2; continue;
                         }
                     }
                     throw new Error(error.error?.message || "Critical API Communication Failure.");
                 }
-                
                 const data = await response.json();
                 return data.candidates[0].content.parts[0].text;
-                
             } catch (e) {
-                if (attempt === maxRetries) {
-                    throw new Error("Google AI servers are currently at maximum capacity. Please attempt again shortly.");
-                }
+                if (attempt === maxRetries) throw new Error("Google AI servers are currently at maximum capacity. Please attempt again shortly.");
             }
         }
     }
@@ -406,20 +486,23 @@
             if (!jsonBlock) throw new Error("No JSON block found.");
             return JSON.parse(jsonBlock[0]);
         } catch (e) {
-            console.error("Extraction error:", text);
             throw new Error("Failed to interpret AI response signature. Please retry.");
         }
     }
 
     function resetLoaderText(loaderId, defaultText) {
         const textEl = document.querySelector(`#${loaderId} .status-text`);
-        if (textEl) {
-            textEl.innerText = defaultText;
-            textEl.style.color = 'var(--text-muted)';
-        }
+        if (textEl) { textEl.innerText = defaultText; textEl.style.color = 'var(--text-muted)'; }
     }
 
-    /* --- FEATURE: DIAGNOSIS --- */
+    function resetDiagnose() {
+        document.getElementById('preview-section').classList.add('hidden');
+        document.getElementById('upload-zone').classList.remove('hidden');
+        document.getElementById('diagnose-result').classList.add('hidden');
+        STATE.imgB64 = null;
+    }
+
+    /* --- FEATURE 1: DEEP DIAGNOSIS --- */
     const uploadZone = document.getElementById('upload-zone');
     const fileInput = document.getElementById('file-input');
     const previewSec = document.getElementById('preview-section');
@@ -444,16 +527,19 @@
         const resDiv = document.getElementById('diagnose-result');
         
         previewSec.classList.add('hidden');
-        resetLoaderText('diagnose-loader', 'Identifying microscopic pathogens and species markers...');
+        resetLoaderText('diagnose-loader', 'Identifying pathogens, soil deficiencies, and compiling treatment data...');
         loader.classList.remove('hidden');
         
-        const prompt = `Act as an elite plant pathologist. Analyze this image. 
-        Return ONLY valid JSON format: {"crop":"Name","health_score":85,"condition":"Healthy/Diseased","summary":"1-2 sentence technical overview","treatments":["Action 1","Action 2"],"risk_level":"Low/Medium/High"}`;
+        // NEW HIGH-DETAIL PROMPT
+        const prompt = `Act as an elite plant pathologist and agronomist. Analyze this image deeply. 
+        Return ONLY valid JSON format with these exact keys: 
+        {"crop":"Name","health_score":85,"condition":"Healthy/Diseased","summary":"1-2 sentence overview","disease_profile":{"name":"Specific disease/pest if any","symptoms":"What is visible","causes":"Underlying reasons"},"actionable_treatments":["Action 1","Action 2"],"fertilizer_plan":"Specific NPK or organic recommendations based on visible state","preventative_measures":["Step 1","Step 2"],"risk_level":"Low/Medium/High/Critical"}`;
         
         try {
             const raw = await callGemini(prompt, STATE.imgB64);
             const data = parseCleanJson(raw);
             
+            // Build the new highly detailed UI
             resDiv.innerHTML = `
                 <div class="result-hero">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 20px;">
@@ -463,27 +549,46 @@
                         </div>
                         <div style="text-align:right;">
                             <div style="font-size:48px; font-weight:800; line-height: 1;">${data.health_score}<span style="font-size:24px;">%</span></div>
-                            <div style="font-size:13px; text-transform:uppercase; letter-spacing:2px; opacity: 0.8; margin-top: 4px;">Vitality Index</div>
+                            <div style="font-size:13px; text-transform:uppercase; letter-spacing:2px; opacity: 0.8; margin-top: 4px;">Health Index</div>
                         </div>
                     </div>
                 </div>
+                
+                <div class="r-card" style="margin-bottom: 1.5rem;">
+                    <div class="detail-badge">Executive Summary</div>
+                    <p style="font-size: 16px; color: var(--text-main); font-weight: 500;">${data.summary}</p>
+                    <div style="margin-top:15px; font-weight:700; color: ${data.risk_level === 'Critical' ? '#dc2626' : 'var(--green-700)'};">Risk Level: ${data.risk_level}</div>
+                </div>
+
                 <div class="result-grid">
                     <div class="r-card">
-                        <h3 style="margin-bottom:16px; color:var(--green-800); font-family: var(--font-display); font-size: 22px;">Botanical Insight</h3>
-                        <p style="color:var(--text-muted); font-size: 16px;">${data.summary}</p>
-                        <div style="margin-top:24px; padding:16px; background:var(--green-50); border-radius:12px; border: 1px solid var(--green-400);">
-                            <span style="font-weight:700; color: var(--green-900);">System Risk Level:</span> 
-                            <span style="color: var(--green-700); font-weight: 600;">${data.risk_level}</span>
-                        </div>
+                        <h3 class="section-title">🔬 Disease Profile</h3>
+                        <p style="margin-bottom: 10px;"><strong>Identified Issue:</strong> ${data.disease_profile.name || 'None detected'}</p>
+                        <p style="margin-bottom: 10px; font-size: 14px;"><strong>Symptoms:</strong> ${data.disease_profile.symptoms}</p>
+                        <p style="font-size: 14px;"><strong>Root Causes:</strong> ${data.disease_profile.causes}</p>
                     </div>
                     <div class="r-card">
-                        <h3 style="margin-bottom:16px; color:var(--green-800); font-family: var(--font-display); font-size: 22px;">Treatment Protocol</h3>
-                        <ul style="padding-left:20px; color: var(--text-main);">
-                            ${data.treatments.map(t => `<li style="margin-bottom:10px;">${t}</li>`).join('')}
+                        <h3 class="section-title">🧪 Fertilizer & Nutrition</h3>
+                        <p style="font-size: 15px; line-height: 1.6;">${data.fertilizer_plan}</p>
+                    </div>
+                </div>
+
+                <div class="result-grid" style="margin-top: 1.5rem;">
+                    <div class="r-card" style="border-top: 4px solid #ef4444;">
+                        <h3 class="section-title">🚨 Immediate Action Plan</h3>
+                        <ul class="detail-list">
+                            ${data.actionable_treatments.map(t => `<li>${t}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="r-card" style="border-top: 4px solid var(--green-400);">
+                        <h3 class="section-title">🛡️ Long-term Prevention</h3>
+                        <ul class="detail-list">
+                            ${data.preventative_measures.map(t => `<li>${t}</li>`).join('')}
                         </ul>
                     </div>
                 </div>
-                <button class="btn-primary full-width large" style="margin-top:2.5rem; background:#1f2937;" onclick="location.reload()">Scan New Specimen</button>
+
+                <button class="btn-primary full-width large" style="margin-top:2.5rem; border-radius: var(--radius-md);" onclick="resetDiagnose()">Scan New Specimen</button>
             `;
             resDiv.classList.remove('hidden');
         } catch(e) { 
@@ -494,64 +599,61 @@
         }
     };
 
-    /* --- FEATURE: WEATHER --- */
+    /* --- FEATURE 2: WEATHER --- */
     document.getElementById('weather-btn').onclick = async () => {
         const loc = document.getElementById('loc-input').value;
         if(!loc) return;
         const res = document.getElementById('weather-result');
         const loader = document.getElementById('weather-loader');
-        
         res.innerHTML = "";
         resetLoaderText('weather-loader', 'Synchronizing with meteorological databases...');
         loader.classList.remove('hidden');
         
         try {
-            const prompt = `Provide a highly professional 3-day agricultural forecast for ${loc}. Include:
-            1. Humidity levels & Evapotranspiration 2. Irrigation recommendations 3. Pathogen/Pest outbreak risks based on moisture. 
-            Format elegantly with HTML using <h3> and <p> tags. No markdown code blocks.`;
+            const prompt = `Provide a highly professional 3-day agricultural forecast for ${loc}. Include: 1. Humidity levels & Evapotranspiration 2. Irrigation recommendations 3. Pathogen/Pest outbreak risks. Format elegantly with HTML using <h3> and <p> tags. No markdown code blocks.`;
             const text = await callGemini(prompt);
             res.innerHTML = `<div class="r-card" style="border-top: 4px solid var(--green-500); padding: 2.5rem;">${text}</div>`;
-        } catch(e) { res.innerHTML = `<p style="color:#dc2626; font-weight:600; padding: 20px; background: #fee2e2; border-radius: 12px;">System Error: ${e.message}</p>`; }
+        } catch(e) { res.innerHTML = `<p style="color:#dc2626; padding: 20px; background: #fee2e2; border-radius: 12px;">System Error: ${e.message}</p>`; }
         finally { loader.classList.add('hidden'); }
     };
 
-    /* --- FEATURE: PLANNER --- */
+    /* --- FEATURE 3: PLANNER --- */
     document.getElementById('planner-btn').onclick = async () => {
         const c = document.getElementById('crop-input').value;
-        const r = document.getElementById('region-input').value;
-        if(!c || !r) return;
+        const r = document.getElementById('region-input').value; // Now grabs from dropdown
+        if(!c) { alert("Please enter a crop."); return; }
+        
+        const soilText = r ? `Soil Type: ${r}` : 'Unknown Soil Type';
+        
         const res = document.getElementById('planner-result');
         const loader = document.getElementById('planner-loader');
-        
         res.innerHTML = "";
         resetLoaderText('planner-loader', 'Calculating optimal timelines and resource allocation...');
         loader.classList.remove('hidden');
         
         try {
-            const prompt = `Create an advanced, professional sowing-to-harvest roadmap for ${c} in ${r}. Use HTML <li> for actionable tasks categorized by growth phase. Do not use markdown wrappers.`;
+            const prompt = `Create an advanced sowing-to-harvest roadmap for ${c} planted in ${soilText}. Include specific fertilizer timelines and watering frequency adapted for this soil type. Use HTML <li> for actionable tasks. Do not use markdown wrappers.`;
             const text = await callGemini(prompt);
             res.innerHTML = `<div class="r-card" style="border-top: 4px solid var(--green-400); padding: 2.5rem;">${text}</div>`;
-        } catch(e) { res.innerHTML = `<p style="color:#dc2626; font-weight:600; padding: 20px; background: #fee2e2; border-radius: 12px;">System Error: ${e.message}</p>`; }
+        } catch(e) { res.innerHTML = `<p style="color:#dc2626; padding: 20px; background: #fee2e2; border-radius: 12px;">System Error: ${e.message}</p>`; }
         finally { loader.classList.add('hidden'); }
     };
 
-    /* --- FEATURE: LIBRARY --- */
+    /* --- FEATURE 4: LIBRARY --- */
     document.getElementById('library-btn').onclick = async () => {
         const q = document.getElementById('query-input').value;
         if(!q) return;
         const res = document.getElementById('library-result');
         const loader = document.getElementById('library-loader');
-        
-        res.classList.remove('hidden');
-        res.innerHTML = "";
+        res.classList.remove('hidden'); res.innerHTML = "";
         resetLoaderText('library-loader', 'Scanning global agricultural literature...');
         loader.classList.remove('hidden');
         
         try {
-            const prompt = `Explain the following farming topic professionally and thoroughly: ${q}. Format beautifully for web display using <h3>, <strong>, and <ul>. Do not output raw markdown blocks.`;
+            const prompt = `Explain the following farming topic thoroughly: ${q}. Format beautifully for web display using <h3>, <strong>, and <ul>. Do not output raw markdown blocks.`;
             const text = await callGemini(prompt);
             res.innerHTML = text;
-        } catch(e) { res.innerHTML = `<p style="color:#dc2626; font-weight:600; padding: 20px; background: #fee2e2; border-radius: 12px;">System Error: ${e.message}</p>`; }
+        } catch(e) { res.innerHTML = `<p style="color:#dc2626; padding: 20px; background: #fee2e2; border-radius: 12px;">System Error: ${e.message}</p>`; }
         finally { loader.classList.add('hidden'); }
     };
 </script>

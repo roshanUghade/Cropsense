@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CropSense AI — Stable Project</title>
+    <title>CropSense AI — Stable v6 (Auto-Retry)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -137,7 +137,7 @@
             <div id="diagnose-loader" class="hidden" style="text-align: center; padding: 5rem;">
                 <div class="leaf-spin">🌿</div>
                 <h3 style="font-family: var(--font-display);">Consulting Botanical Engine...</h3>
-                <p style="color: var(--neutral-500);">Identifying crop species and health markers</p>
+                <p class="status-text" style="color: var(--neutral-500);">Identifying crop species and health markers</p>
             </div>
 
             <div id="diagnose-result" class="hidden"></div>
@@ -152,7 +152,10 @@
                     <button class="btn-primary" id="weather-btn">Analyze Trends</button>
                 </div>
             </div>
-            <div id="weather-loader" class="hidden" style="text-align: center; padding: 3rem;"><div class="leaf-spin">☁️</div></div>
+            <div id="weather-loader" class="hidden" style="text-align: center; padding: 3rem;">
+                <div class="leaf-spin">☁️</div>
+                <p class="status-text" style="color: var(--neutral-500); margin-top: 10px;">Fetching meteorological data...</p>
+            </div>
             <div id="weather-result"></div>
         </section>
 
@@ -171,7 +174,10 @@
                 </div>
                 <button class="btn-primary full-width large" id="planner-btn">Generate AI Roadmap</button>
             </div>
-            <div id="planner-loader" class="hidden" style="text-align: center; padding: 3rem;"><div class="leaf-spin">🗓️</div></div>
+            <div id="planner-loader" class="hidden" style="text-align: center; padding: 3rem;">
+                <div class="leaf-spin">🗓️</div>
+                <p class="status-text" style="color: var(--neutral-500); margin-top: 10px;">Drafting your seasonal timeline...</p>
+            </div>
             <div id="planner-result" style="margin-top: 2rem;"></div>
         </section>
 
@@ -181,7 +187,10 @@
                 <input type="text" id="query-input" class="input-field" style="margin-bottom: 0;" placeholder="Search for treatments, fertilizers, or techniques...">
                 <button class="btn-primary" id="library-btn">Search</button>
             </div>
-            <div id="library-loader" class="hidden" style="text-align: center; padding: 3rem;"><div class="leaf-spin">📚</div></div>
+            <div id="library-loader" class="hidden" style="text-align: center; padding: 3rem;">
+                <div class="leaf-spin">📚</div>
+                <p class="status-text" style="color: var(--neutral-500); margin-top: 10px;">Searching agricultural databases...</p>
+            </div>
             <div id="library-result" class="r-card hidden"></div>
         </section>
 
@@ -190,7 +199,7 @@
 
 <script>
     /* --- SYSTEM INITIALIZATION --- */
-    let STATE = { apiKey: localStorage.getItem('cs_v5_key') || '', imgB64: null };
+    let STATE = { apiKey: localStorage.getItem('cs_v6_key') || '', imgB64: null };
     const MODAL = document.getElementById('api-modal');
 
     if (STATE.apiKey) MODAL.classList.add('hidden');
@@ -199,7 +208,7 @@
         const val = document.getElementById('api-key-input').value.trim();
         if(val.startsWith('AIza')) { 
             STATE.apiKey = val; 
-            localStorage.setItem('cs_v5_key', val); 
+            localStorage.setItem('cs_v6_key', val); 
             MODAL.classList.add('hidden'); 
         } else {
             alert("Please enter a valid Google Gemini API Key.");
@@ -223,27 +232,57 @@
         };
     });
 
-    /* --- CORE API HANDLER --- */
-    async function callGemini(prompt, base64 = null) {
-        // v1beta endpoint specifically for Gemini 1.5 Flash models
+    /* --- CORE API HANDLER (WITH AUTO-RETRY LOGIC) --- */
+    async function callGemini(prompt, base64 = null, maxRetries = 3) {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${STATE.apiKey}`;
         
         const parts = [{ text: prompt }];
         if (base64) parts.push({ inline_data: { mime_type: "image/jpeg", data: base64 } });
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts }] })
-        });
-        
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error?.message || "Critical API Communication Failure.");
+        let delay = 2000; // Start with a 2-second wait on failure
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts }] })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    
+                    // Handle 503 (Server Busy) and 429 (Rate Limit / High Demand)
+                    if (response.status === 503 || response.status === 429) {
+                        if (attempt < maxRetries) {
+                            console.warn(`Server busy. Retrying in ${delay/1000} seconds... (Attempt ${attempt} of ${maxRetries})`);
+                            
+                            // Update UI text so user knows we are retrying
+                            const activeStatusText = document.querySelector('.tab-panel.active .status-text');
+                            if (activeStatusText) {
+                                activeStatusText.innerText = `Network busy, retrying automatically... (Attempt ${attempt})`;
+                                activeStatusText.style.color = '#d97706'; // Warning orange
+                            }
+                            
+                            await new Promise(res => setTimeout(res, delay));
+                            delay *= 2; // Double the wait time for the next attempt (2s, 4s, 8s...)
+                            continue;
+                        }
+                    }
+                    // If it's another type of error (like bad API key) or we ran out of retries
+                    throw new Error(error.error?.message || "Critical API Communication Failure.");
+                }
+                
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+                
+            } catch (e) {
+                // If we've exhausted all retries, throw the final error to the user
+                if (attempt === maxRetries) {
+                    throw new Error("Google AI servers are currently experiencing extremely high demand. Please try again in a few minutes.");
+                }
+            }
         }
-        
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text;
     }
 
     function parseCleanJson(text) {
@@ -254,6 +293,15 @@
         } catch (e) {
             console.error("Extraction error:", text);
             throw new Error("Failed to interpret AI response. Please retry.");
+        }
+    }
+
+    // Helper to reset status text color when loading starts
+    function resetLoaderText(loaderId, defaultText) {
+        const textEl = document.querySelector(`#${loaderId} .status-text`);
+        if (textEl) {
+            textEl.innerText = defaultText;
+            textEl.style.color = 'var(--neutral-500)';
         }
     }
 
@@ -282,6 +330,7 @@
         const resDiv = document.getElementById('diagnose-result');
         
         previewSec.classList.add('hidden');
+        resetLoaderText('diagnose-loader', 'Identifying crop species and health markers...');
         loader.classList.remove('hidden');
         
         const prompt = `Act as a plant pathologist. Analyze this image. 
@@ -308,6 +357,9 @@
                     <div class="r-card">
                         <h3 style="margin-bottom:12px; color:var(--green-700);">Botanical Insight</h3>
                         <p style="color:var(--neutral-500);">${data.summary}</p>
+                        <div style="margin-top:20px; padding:10px; background:var(--neutral-50); border-radius:8px;">
+                            <span style="font-weight:700;">Risk Level:</span> ${data.risk_level}
+                        </div>
                     </div>
                     <div class="r-card">
                         <h3 style="margin-bottom:12px; color:var(--green-700);">Treatment Protocol</h3>
@@ -335,6 +387,7 @@
         const loader = document.getElementById('weather-loader');
         
         res.innerHTML = "";
+        resetLoaderText('weather-loader', 'Fetching meteorological data...');
         loader.classList.remove('hidden');
         
         try {
@@ -343,7 +396,7 @@
             Format with HTML using <h3> and <p> tags.`;
             const text = await callGemini(prompt);
             res.innerHTML = `<div class="r-card" style="border-left: 5px solid var(--green-600);">${text}</div>`;
-        } catch(e) { res.innerHTML = `<p style="color:red;">Error: ${e.message}</p>`; }
+        } catch(e) { res.innerHTML = `<p style="color:#ef4444; font-weight:600;">Error: ${e.message}</p>`; }
         finally { loader.classList.add('hidden'); }
     };
 
@@ -356,13 +409,14 @@
         const loader = document.getElementById('planner-loader');
         
         res.innerHTML = "";
+        resetLoaderText('planner-loader', 'Drafting your seasonal timeline...');
         loader.classList.remove('hidden');
         
         try {
             const prompt = `Create a sowing-to-harvest roadmap for ${c} in ${r}. Use HTML <li> for tasks.`;
             const text = await callGemini(prompt);
             res.innerHTML = `<div class="r-card" style="border-left: 5px solid var(--green-400);">${text}</div>`;
-        } catch(e) { res.innerHTML = `<p style="color:red;">Error: ${e.message}</p>`; }
+        } catch(e) { res.innerHTML = `<p style="color:#ef4444; font-weight:600;">Error: ${e.message}</p>`; }
         finally { loader.classList.add('hidden'); }
     };
 
@@ -374,13 +428,14 @@
         const loader = document.getElementById('library-loader');
         
         res.classList.remove('hidden');
-        res.innerHTML = "Querying Agricultural Database...";
+        res.innerHTML = "";
+        resetLoaderText('library-loader', 'Searching agricultural databases...');
         loader.classList.remove('hidden');
         
         try {
             const text = await callGemini(`Explain the following farming topic: ${q}. Format for web display.`);
             res.innerHTML = `<div style="padding:10px;">${text}</div>`;
-        } catch(e) { res.innerHTML = "Resource temporarily unavailable."; }
+        } catch(e) { res.innerHTML = `<p style="color:#ef4444; font-weight:600;">Error: ${e.message}</p>`; }
         finally { loader.classList.add('hidden'); }
     };
 </script>

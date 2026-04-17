@@ -131,15 +131,23 @@
         }
 
         /* Direct API Key Link Styling */
+        .api-instructions {
+            background: var(--green-50);
+            border: 1px solid var(--green-400);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
         .api-link {
             display: inline-block;
-            margin-bottom: 1.5rem;
             font-size: 14px;
             color: var(--green-600);
             font-weight: 600;
             text-decoration: none;
             border-bottom: 1px dashed var(--green-400);
             transition: color 0.2s, border-color 0.2s;
+            margin-bottom: 8px;
         }
         .api-link:hover {
             color: var(--green-800);
@@ -266,11 +274,15 @@
     <div class="modal-box">
         <div style="font-size:4rem; margin-bottom:1rem; line-height: 1;">⚡</div>
         <h2 style="font-family: var(--font-display); font-size: 28px; margin-bottom: 0.5rem; color: var(--green-950);">System Access</h2>
-        <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 1rem;">Connect your Gemini AI Key to activate intelligent agricultural systems.</p>
+        <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 1.5rem;">Connect your Gemini AI Key to activate intelligent agricultural systems.</p>
         
-        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="api-link">Don't have an API key? Get one here for free &rarr;</a>
+        <div class="api-instructions">
+            <p style="font-size: 14px; font-weight: 700; color: var(--green-900); margin-bottom: 5px;">How to get your free key:</p>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="api-link">1. Click here to open Google AI Studio &rarr;</a>
+            <p style="font-size: 13px; color: var(--green-800); margin-top: 5px; line-height: 1.4;">2. Click <b>Create API Key</b>. Note: A valid Gemini key will always begin with <code><b>AIza...</b></code></p>
+        </div>
         
-        <input type="password" id="api-key-input" class="input-field" placeholder="Paste your API key securely..." autocomplete="off">
+        <input type="password" id="api-key-input" class="input-field" placeholder="Paste your AIza... API key securely here" autocomplete="off">
         <div style="display: flex; gap: 10px;">
             <button class="btn-primary full-width" id="save-key-btn">Initialize</button>
             <button class="btn-primary full-width" style="background: #e5e7eb; color: #374151; box-shadow: none;" onclick="closeApiModal()">Cancel</button>
@@ -435,7 +447,7 @@
             closeApiModal();
             transitionToApp();
         } else {
-            alert("Please enter a valid Google Gemini API Key.");
+            alert("Please enter a valid Google Gemini API Key. It must start with 'AIza'.");
         }
     };
 
@@ -459,8 +471,7 @@
 
     /* --- GEMINI API ENGINE (WITH AUTO-RETRY) --- */
     async function callGemini(prompt, base64 = null, maxRetries = 3) {
-        // CHANGED TO gemini-1.5-flash-8b: Fast, stable, and less likely to hit quota limits.
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro:generateContent?key=${STATE.apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${STATE.apiKey}`;
         const parts = [{ text: prompt }];
         if (base64) parts.push({ inline_data: { mime_type: "image/jpeg", data: base64 } });
 

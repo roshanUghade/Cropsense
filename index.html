@@ -279,10 +279,10 @@
         <div class="api-instructions">
             <p style="font-size: 14px; font-weight: 700; color: var(--green-900); margin-bottom: 5px;">How to get your free key:</p>
             <a href="https://aistudio.google.com/app/apikey" target="_blank" class="api-link">1. Click here to open Google AI Studio &rarr;</a>
-            <p style="font-size: 13px; color: var(--green-800); margin-top: 5px; line-height: 1.4;">2. Click <b>Create API Key</b>. Note: A valid Gemini key will always begin with <code><b>AIza...</b></code></p>
+            <p style="font-size: 13px; color: var(--green-800); margin-top: 5px; line-height: 1.4;">2. Click <b>Create API Key</b> and copy the long string of characters it generates.</p>
         </div>
         
-        <input type="password" id="api-key-input" class="input-field" placeholder="Paste your AIza... API key securely here" autocomplete="off">
+        <input type="password" id="api-key-input" class="input-field" placeholder="Paste your API key securely here..." autocomplete="off">
         <div style="display: flex; gap: 10px;">
             <button class="btn-primary full-width" id="save-key-btn">Initialize</button>
             <button class="btn-primary full-width" style="background: #e5e7eb; color: #374151; box-shadow: none;" onclick="closeApiModal()">Cancel</button>
@@ -441,13 +441,14 @@
 
     document.getElementById('save-key-btn').onclick = () => {
         const val = document.getElementById('api-key-input').value.trim();
-        if(val.startsWith('AIza')) { 
+        // CHANGED: Removed the 'AIza' requirement, now just checking if the key has a valid length
+        if(val.length > 30) { 
             STATE.apiKey = val; 
             localStorage.setItem('cs_ultimate_key', val); 
             closeApiModal();
             transitionToApp();
         } else {
-            alert("Please enter a valid Google Gemini API Key. It must start with 'AIza'.");
+            alert("Please enter a valid Google Gemini API Key (it should be a long string of characters).");
         }
     };
 

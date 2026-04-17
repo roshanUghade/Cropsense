@@ -460,7 +460,7 @@
     /* --- GEMINI API ENGINE (WITH AUTO-RETRY) --- */
     async function callGemini(prompt, base64 = null, maxRetries = 3) {
         // CHANGED TO gemini-1.5-flash-8b: Fast, stable, and less likely to hit quota limits.
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${STATE.apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro:generateContent?key=${STATE.apiKey}`;
         const parts = [{ text: prompt }];
         if (base64) parts.push({ inline_data: { mime_type: "image/jpeg", data: base64 } });
 
